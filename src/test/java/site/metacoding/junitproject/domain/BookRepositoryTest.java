@@ -1,16 +1,21 @@
 package site.metacoding.junitproject.domain;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ *  1. 테스트 메서드는 순서보장x
+ *  @Order(1) 순서 지정하는 어노테이션
+ *  2. auto_increment 값은 초기화 안됨 ( 1 이 지워지고 다음 실행시 2로 저장)
+ *
+ */
 
 @DataJpaTest // DB 와 관련된 컴포넌트만 메모리에 로딩
 public class BookRepositoryTest {
@@ -67,6 +72,7 @@ public class BookRepositoryTest {
     } // 트랜잭션 종료 ( 저장된 데이터를 초기화함)
 
     // 3. 책 한건 보기
+    @Sql("classpath:db/tableInit.sql")
     @Test
     public void 책한건보기_test() {
         //given
@@ -82,6 +88,7 @@ public class BookRepositoryTest {
     }
 
     // 4. 책 삭제
+    @Sql("classpath:db/tableInit.sql")
     @Test
     public void 책삭제_test() {
         // given
