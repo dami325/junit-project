@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.metacoding.junitproject.domain.Book;
 import site.metacoding.junitproject.domain.BookRepository;
+import site.metacoding.junitproject.util.MailSender;
 import site.metacoding.junitproject.web.dto.BookRespDto;
 import site.metacoding.junitproject.web.dto.BookSaveReqDto;
 
@@ -17,11 +18,17 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final MailSender mailSender;
 
     // 1. 책 등록
     @Transactional(rollbackFor = RuntimeException.class) /**Runtime 예외 발생시 rollback 처리*/
     public BookRespDto 책등록하기(BookSaveReqDto dto){
         Book bookPS = bookRepository.save(dto.toEntity());
+        if (bookPS != null) {
+            if(!mailSender.send()){
+                throw new RuntimeException("메일이 전송되지 않았습니다");
+            }
+        }
         return new BookRespDto().toDto(bookPS);
     }
     
