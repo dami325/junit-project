@@ -34,9 +34,9 @@ public class BookApiController { // 컴포지션 = has 관계
         BookRespDto bookRespDto = bookService.책등록하기(bookSaveReqDto);
 
         // 원래 AOP 처리하는게 좋음!!
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
-            for(FieldError fe : bindingResult.getFieldErrors()){
+            for (FieldError fe : bindingResult.getFieldErrors()) {
                 errorMap.put(fe.getField(), fe.getDefaultMessage());
             }
             System.out.println("=========================");
@@ -50,7 +50,7 @@ public class BookApiController { // 컴포지션 = has 관계
                 .code(1)
                 .msg("글 저장 성공")
                 .body(bookRespDto)
-                .build(),HttpStatus.CREATED); // 201 = insert
+                .build(), HttpStatus.CREATED); // 201 = insert
     }
 
     @PostMapping("/api/v2/book")
@@ -72,7 +72,7 @@ public class BookApiController { // 컴포지션 = has 관계
                 .code(1)
                 .msg("글 목록보기 성공")
                 .body(bookListRespDto)
-                .build(),HttpStatus.OK); // 200 = OK
+                .build(), HttpStatus.OK); // 200 = OK
     }
 
     // 3. 책한건보기
@@ -83,7 +83,7 @@ public class BookApiController { // 컴포지션 = has 관계
                 .code(1)
                 .msg("글 한건보기 성공")
                 .body(bookRespDto)
-                .build(),HttpStatus.OK); // 200 = OK
+                .build(), HttpStatus.OK); // 200 = OK
     }
 
     // 4. 책삭제하기
@@ -94,12 +94,29 @@ public class BookApiController { // 컴포지션 = has 관계
                 .code(1)
                 .msg("글 삭제하기 성공")
                 .body(null)
-                .build(),HttpStatus.OK); // 200 = OK
+                .build(), HttpStatus.OK); // 200 = OK
     }
 
     // 5. 책수정하기
-    public ResponseEntity<?> updateBook() {
-        return null;
+    @PutMapping("/api/v1/book/{id}")
+    public ResponseEntity<?> updateBook(@PathVariable Long id, @RequestBody @Valid BookSaveReqDto bookSaveReqDto, BindingResult bindingResult) {
+
+        // 원래 AOP 처리하는게 좋음!!
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError fe : bindingResult.getFieldErrors()) {
+                errorMap.put(fe.getField(), fe.getDefaultMessage());
+            }
+
+            throw new RuntimeException(errorMap.toString());
+        }
+
+        BookRespDto bookRespDto = bookService.책수정하기(id, bookSaveReqDto);
+        return new ResponseEntity<>(CMRespDto.builder()
+                .code(1)
+                .msg("글 수정하기 성공")
+                .body(bookRespDto)
+                .build(), HttpStatus.OK);
     }
 
 }
