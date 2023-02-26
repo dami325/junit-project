@@ -5,16 +5,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import site.metacoding.junitproject.service.BookService;
+import site.metacoding.junitproject.web.dto.response.BookListRespDto;
 import site.metacoding.junitproject.web.dto.response.BookRespDto;
 import site.metacoding.junitproject.web.dto.request.BookSaveReqDto;
 import site.metacoding.junitproject.web.dto.response.CMRespDto;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -55,8 +58,14 @@ public class BookApiController { // 컴포지션 = has 관계
     }
 
     // 2. 책목록보기
+    @GetMapping("/api/v1/book")
     public ResponseEntity<?> getBookList() {
-        return null;
+        BookListRespDto bookListRespDto = bookService.책목록보기();
+        return new ResponseEntity<>(CMRespDto.builder()
+                .code(1)
+                .msg("글 목록보기 성공")
+                .body(bookListRespDto)
+                .build(),HttpStatus.OK); // 200 = OK
     }
 
     // 3. 책한건보기
