@@ -13,6 +13,7 @@ import site.metacoding.junitproject.web.dto.BookSaveReqDto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -88,5 +89,29 @@ public class BookServiceTest {
         assertThat(bookRespDtoList.get(1).getTitle()).isEqualTo("spring강의");
         assertThat(bookRespDtoList.get(1).getAuthor()).isEqualTo("겟인데어");
     }
+
+    @Test
+    public void 책한건보기_테스트() {
+        // given
+        Long id = 1L;
+        Book book = Book.builder()
+                .id(1L)
+                .title("junit강의")
+                .author("메타코딩")
+                .build();
+        Optional<Book> bookOF = Optional.of(book);
+
+        // stub
+        when(bookRepository.findById(id)).thenReturn(bookOF);
+
+        // when
+        BookRespDto bookRespDto = bookService.책한건보기(id);
+
+        // then
+        assertThat(bookRespDto.getTitle()).isEqualTo(book.getTitle());
+        assertThat(bookRespDto.getAuthor()).isEqualTo(book.getAuthor());
+
+    }
+
 
 }
