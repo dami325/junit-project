@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import site.metacoding.junitproject.service.BookService;
 import site.metacoding.junitproject.web.dto.response.BookListRespDto;
 import site.metacoding.junitproject.web.dto.response.BookRespDto;
@@ -79,13 +76,25 @@ public class BookApiController { // 컴포지션 = has 관계
     }
 
     // 3. 책한건보기
-    public ResponseEntity<?> getBookOne() {
-        return null;
+    @GetMapping("api/v1/book/{id}")
+    public ResponseEntity<?> getBookOne(@PathVariable Long id) {
+        BookRespDto bookRespDto = bookService.책한건보기(id);
+        return new ResponseEntity<>(CMRespDto.builder()
+                .code(1)
+                .msg("글 한건보기 성공")
+                .body(bookRespDto)
+                .build(),HttpStatus.OK); // 200 = OK
     }
 
     // 4. 책삭제하기
-    public ResponseEntity<?> deleteBook() {
-        return null;
+    @DeleteMapping("/api/v1/book/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable Long id) {
+        bookService.책삭제하기(id);
+        return new ResponseEntity<>(CMRespDto.builder()
+                .code(1)
+                .msg("글 삭제하기 성공")
+                .body(null)
+                .build(),HttpStatus.OK); // 200 = OK
     }
 
     // 5. 책수정하기
