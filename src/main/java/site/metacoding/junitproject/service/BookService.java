@@ -69,7 +69,7 @@ public class BookService {
     
     // 5. 책 수정
     @Transactional(rollbackFor = RuntimeException.class)
-    public void 책수정하기(Long id, BookSaveReqDto dto){ // id, title, author
+    public BookRespDto 책수정하기(Long id, BookSaveReqDto dto){ // id, title, author
         Optional<Book> bookOP = bookRepository.findById(id);
         if(bookOP.isPresent()){
             Book bookPS = bookOP.get();
@@ -78,10 +78,10 @@ public class BookService {
              * 영속화 돼있는 엔티티의 값을 바꿔주기만 하면 메서드 종료시에 더티체킹으로 update가 됩니다.
              * db 쪽으로 flush후 update가 실행됨
              */
+            return bookPS.toDto();
         } else {
             throw new RuntimeException("해당 아이디를 찾을 수 없습니다.");
         }
-
     }
     
 }
