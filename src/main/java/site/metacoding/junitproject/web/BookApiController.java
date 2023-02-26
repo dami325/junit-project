@@ -43,11 +43,7 @@ public class BookApiController { // 컴포지션 = has 관계
             System.out.println(errorMap.toString());
             System.out.println("=========================");
 
-            return new ResponseEntity<>(CMRespDto.builder()
-                    .code(-1)
-                    .msg(errorMap.toString())
-                    .body(bookRespDto)
-                    .build(),HttpStatus.BAD_REQUEST); // 400 = 요청이 잘못됨
+            throw new RuntimeException(errorMap.toString());
         }
 
 
