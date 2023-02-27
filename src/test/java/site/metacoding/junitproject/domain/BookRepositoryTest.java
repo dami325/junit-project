@@ -3,6 +3,7 @@ package site.metacoding.junitproject.domain;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  */
 
+@ActiveProfiles("dev")//dev 모드일때만 작동해라
 @DataJpaTest // DB 와 관련된 컴포넌트만 메모리에 로딩
 public class BookRepositoryTest {
     

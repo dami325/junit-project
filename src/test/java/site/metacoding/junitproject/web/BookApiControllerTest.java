@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import site.metacoding.junitproject.domain.Book;
 import site.metacoding.junitproject.domain.BookRepository;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.*;
  * 통합테스트 ( C, S, R)
  * 컨트롤러만 테스트 하는 것이 아님
  */
+@ActiveProfiles("dev")//dev 모드일때만 작동해라
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BookApiControllerTest {
 
@@ -52,6 +54,46 @@ public class BookApiControllerTest {
                 .author(author)
                 .build();
         bookRepository.save(book);
+    }
+
+    @Sql("classpath:db/tableInit.sql")
+    @Test
+    public void updateBook_test() throws Exception {
+        // given
+        Integer id = 1;
+        BookSaveReqDto bookSaveReqDto = new BookSaveReqDto();
+        bookSaveReqDto.setTitle("spring");
+        bookSaveReqDto.setAuthor("메타코딩");
+
+        String body = om.writeValueAsString(bookSaveReqDto);
+        
+        // when
+        HttpEntity<String> request = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = rt.exchange("/api/v1/book/"+id, HttpMethod.PUT, request, String.class);
+
+        // then
+        DocumentContext dc = JsonPath.parse(response.getBody());
+        String title = dc.read("$.body.title");
+        assertThat(title).isEqualTo("spring");
+
+
+    }
+
+    @Sql("classpath:db/tableInit.sql")
+    @Test
+    public void deleteBook_test() {
+        // given
+        Integer id = 1;
+
+        // when
+        HttpEntity<String> request = new HttpEntity<>(null, headers);
+        ResponseEntity<String> response = rt.exchange("/api/v1/book/"+id, HttpMethod.DELETE, request, String.class);
+
+        // then
+        DocumentContext dc = JsonPath.parse(response.getBody());
+        int code = dc.read("$.code");
+
+        assertThat(code).isEqualTo(1);
     }
 
     @Sql("classpath:db/tableInit.sql")
